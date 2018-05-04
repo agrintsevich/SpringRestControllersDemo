@@ -1,35 +1,34 @@
 package com.example.userinfo.controller;
 
+import com.example.userinfo.model.EntityList;
 import com.example.userinfo.model.Payment;
-import com.example.userinfo.repository.PaymentRepository;
+import com.example.userinfo.queue.PaymentQueueSender;
+import com.example.userinfo.service.PaymentService;
+import org.apache.activemq.command.ActiveMQQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
 public class PaymentController {
 
     @Autowired
-    PaymentRepository paymentRepository;
+    private PaymentService paymentService;
 
-    @GetMapping(value = "/payments")
-    @ResponseBody
-    public List<Payment> getAllPayments() {
-        return this.paymentRepository.findAll();
-    }
+    @Autowired
+    private PaymentQueueSender paymentQueueSender;
 
-    @GetMapping(value = "/payments/{id}")
+    @GetMapping(value = "/payments/{id}", produces = MediaType.APPLICATION_XML_VALUE)
     @ResponseBody
-    public List<Payment> getUserPayments(@PathVariable("id") Long userId) {
-        return this.paymentRepository.findByUserId(userId);
+    public EntityList<Payment> getUserPayments(@PathVariable("id") Long userId) {
+        return new EntityList(paymentService.getPaymentsByUserId(userId));
     }
 
     @PostMapping(value = "/payments", consumes = MediaType.APPLICATION_XML_VALUE)
-    public Payment createPayment(@Valid @RequestBody final Payment payment) {
-        return this.paymentRepository.save(payment);
+    public void createPayment(@Valid @RequestBody final Payment payment) {
+        paymentQueueSender.sendMessage(new ActiveMQQueue("payment"), payment);
     }
 }

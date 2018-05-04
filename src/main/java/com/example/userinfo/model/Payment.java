@@ -6,8 +6,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
@@ -15,7 +15,9 @@ import java.util.Date;
 @EntityListeners(AuditingEntityListener.class)
 @XmlRootElement(name = "payment")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Payment {
+public class Payment implements Serializable {
+    private static final long serialVersionUID = -295422703255886286L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,11 +30,9 @@ public class Payment {
 
     private PaymentType paymentType;
 
-
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate
-    @XmlElement
     private Date date;
 
     public User getUser() {

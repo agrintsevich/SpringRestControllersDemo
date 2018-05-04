@@ -1,7 +1,10 @@
 package com.example.userinfo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.List;
 
+@JsonIgnoreProperties(allowGetters = true)
 public class UserInfo {
     private User user;
     private List<Payment> payments;
