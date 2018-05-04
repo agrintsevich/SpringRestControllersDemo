@@ -15,7 +15,7 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @GetMapping("/users")
     public List<User> getAllUsers() {
@@ -24,7 +24,7 @@ public class UserController {
 
     @PostMapping("/users")
     public User createUser(@Valid @RequestBody final User user) {
-        return this.userRepository.save(user);
+        return (User) this.userRepository.save(user);
     }
 
     @GetMapping("/users/{id}")
@@ -36,14 +36,13 @@ public class UserController {
     @PutMapping("/users/{id}")
     public User updateUser(@PathVariable(value = "id") final Long userId,
                            @Valid @RequestBody final User userDetails) {
-
         final User user = this.userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
         user.setName(userDetails.getName());
         user.setContent(userDetails.getContent());
 
-        final User updatedUser = this.userRepository.save(user);
+        final User updatedUser = (User) this.userRepository.save(user);
         return updatedUser;
     }
 
@@ -51,9 +50,7 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@PathVariable(value = "id") final Long userId) {
         final User user = this.userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
-
         this.userRepository.delete(user);
-
         return ResponseEntity.ok().build();
     }
 }

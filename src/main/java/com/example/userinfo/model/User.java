@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
@@ -19,7 +20,9 @@ import java.util.Date;
         allowGetters = true)
 @XmlRootElement(name = "user")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class User {
+public class User implements Serializable {
+    private static final long serialVersionUID = -295422703255886286L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
