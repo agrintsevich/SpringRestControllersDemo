@@ -11,6 +11,8 @@ import org.springframework.jms.annotation.JmsListenerConfigurer;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.config.JmsListenerEndpointRegistrar;
 import org.springframework.jms.config.SimpleJmsListenerEndpoint;
+import org.springframework.jms.connection.JmsTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.ErrorHandler;
 
 import javax.jms.MessageListener;
@@ -35,6 +37,7 @@ public class JmsConfiguration implements JmsListenerConfigurer {
         DefaultJmsListenerContainerFactory factory
                 = new DefaultJmsListenerContainerFactory();
         factory.setConnectionFactory(activeMQConnectionFactory());
+        factory.setTransactionManager(transactionManager());
         ErrorHandler jmsErrorHandler = lookupBeanByType(JmsErrorHandler.class);
         factory.setErrorHandler(jmsErrorHandler);
         return factory;
@@ -48,6 +51,13 @@ public class JmsConfiguration implements JmsListenerConfigurer {
         MessageListener jmsMessageListener = lookupBeanByType(PaymentListener.class);
         endpoint.setMessageListener(jmsMessageListener);
         registrar.registerEndpoint(endpoint);
+    }
+
+    @Bean
+    public PlatformTransactionManager transactionManager() {
+        JmsTransactionManager transactionManager = new JmsTransactionManager();
+        transactionManager.setConnectionFactory(activeMQConnectionFactory());
+        return transactionManager;
     }
 
     private <T> T lookupBeanByType(Class<T> clazz) {
