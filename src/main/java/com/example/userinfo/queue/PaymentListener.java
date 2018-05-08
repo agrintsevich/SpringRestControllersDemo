@@ -22,6 +22,7 @@ public class PaymentListener implements MessageListener {
             try {
                 final Payment payment = (Payment) ((ActiveMQObjectMessage) message).getObject();
                 paymentService.addPayment(payment);
+                message.acknowledge();
             } catch (JMSException ex) {
                 throw new RuntimeException(ex);
             }

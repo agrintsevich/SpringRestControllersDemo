@@ -53,6 +53,4 @@ public class JmsConfiguration implements JmsListenerConfigurer {
     private <T> T lookupBeanByType(Class<T> clazz) {
         return (T) appContext.getAutowireCapableBeanFactory().autowire(clazz, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
     }
-
-
 }
